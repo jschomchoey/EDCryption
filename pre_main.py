@@ -48,6 +48,7 @@ def openfile_en():
         path_entry_en.delete(0, END)
         filepath = os.path.abspath(file.name)
         path_entry_en.insert(END, str(filepath))
+        # progress_en.insert(0,"Test")
 
 
 def openfile_de():
@@ -81,13 +82,21 @@ def decrypt(ciphertext, key):
 
 def encrypt_button_clicked():
     plaintext = path_entry_en.get()
+
+    f = open("examplefile/textfile.txt", "r")
+    print(f.read())
+
+    #plaintext = f.read()
+    
     enc = encrypt(plaintext, key)
     result_label.config(text="Encrypted data: " + enc.decode())
+    progress_en.insert(0,enc.decode())
 
 def decrypt_button_clicked():
     ciphertext = path_entry_de.get()
     decrypted = decrypt(ciphertext, key)
     result_label.config(text="Decrypted data: " + decrypted)
+    progress_de.insert(0,decrypted)
 
 key = get_random_bytes(16)
 
@@ -141,8 +150,8 @@ button = tk.Button(
 button.pack()
 
 # Progress
-progress = Entry(encryption_frame)
-progress.pack(fill=tk.BOTH, expand=True, pady=10, padx=20)
+progress_en = Entry(encryption_frame)
+progress_en.pack(fill=tk.BOTH, expand=True, pady=10, padx=20)
 
 
 # Progress Bar
@@ -186,7 +195,7 @@ username_entry.pack(side="left", fill=tk.X, expand=True, padx=10)
 button = tk.Button(
     password_frame,
     text="Decryption",
-    command=print_something,
+    command=lambda: [decrypt_button_clicked(),print_something()], # can't decrypt
     height=1,
     width=10,
     bg="black",
@@ -195,8 +204,8 @@ button = tk.Button(
 button.pack()
 
 # Progress
-progress = Entry(decryption_frame)
-progress.pack(fill=tk.BOTH, expand=True, pady=10, padx=20)
+progress_de = Entry(decryption_frame)
+progress_de.pack(fill=tk.BOTH, expand=True, pady=10, padx=20)
 
 
 # Progress Bar
