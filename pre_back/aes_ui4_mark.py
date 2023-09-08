@@ -42,7 +42,7 @@ plaintext_label.pack()
 plaintext_entry = tk.Entry(root)
 plaintext_entry.pack()
 
-encrypt_button = tk.Button(root, text="Encrypt", command=encrypt_button_clicked)
+encrypt_button = tk.Button(root, text="Encrypt", command=lambda: [encrypt_button_clicked()]) #more than one command
 encrypt_button.pack()
 
 ciphertext_label = tk.Label(root, text="Enter the ciphertext:")
