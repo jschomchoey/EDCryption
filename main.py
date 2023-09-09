@@ -92,7 +92,8 @@ def encrypt_button_clicked():
     # plaintext = f.read()
 
     enc = encrypt(readfile, key)
-    result_label.config(text="Encrypted data: " + enc.decode())
+    #result_label.config(text="Encrypted data: " + enc.decode())
+    progress_en.delete(0, END)
     progress_en.insert(0, enc.decode())
     # progress_en.insert(0,"\n")
 
@@ -110,7 +111,8 @@ def decrypt_button_clicked():
     print(readfile)
 
     decrypted = decrypt(readfile, key)
-    result_label.config(text="Decrypted data: " + decrypted)
+    #result_label.config(text="Decrypted data: " + decrypted)
+    progress_de.delete(0, END)
     progress_de.insert(0, decrypted)
     # progress_de.insert(0,"\n")
 
@@ -242,7 +244,7 @@ progBar = ttk.Progressbar(
 )
 progBar.pack(pady=15, padx=20)
 
-result_label = tk.Label(app, text="")
-result_label.pack()
+#result_label = tk.Label(app, text="")
+#result_label.pack()
 
 app.mainloop()
