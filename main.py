@@ -1,10 +1,12 @@
-# Update 1.0.0
+# Update 1.1.0
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
+from tkinter import messagebox
 from tkinter.filedialog import askopenfile
 import os
 import tkinter as tk
+
 
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
@@ -41,7 +43,7 @@ def openfile_en():
             ("Text Files", "*.txt"),
             ("Picture Files", "*.png *.jpg *.jpeg"),
             ("Video Files", "*.mp4 *.mov"),
-            ("All Files", "*."),
+            ("All Files", "*.*"),
         ],
     )
     if file:
@@ -83,7 +85,7 @@ def decrypt(ciphertext, key_de):
 
 
 def encrypt_button_clicked():
-    progress_en.delete(0, END)
+    progress_en.delete("1.0","end")
     text = password_entry_en.get()
     print(text)
     padded_byte_object = make_16_bytes(text)
@@ -103,7 +105,7 @@ def encrypt_button_clicked():
     enc = encrypt(readfile, key_en)
     # result_label.config(text="Encrypted data: " + enc.decode())
 
-    progress_en.insert(0, enc.decode() + '\n')
+    progress_en.insert(tk.END, enc.decode() + '\n')
     # progress_en.insert(0,"\n")
 
     # creat encrypted file
@@ -113,7 +115,7 @@ def encrypt_button_clicked():
 
 
 def decrypt_button_clicked():
-    progress_de.delete(0, END)
+    progress_de.delete("1.0","end")
     text = password_entry_de.get()
     print(text)
     padded_byte_object = make_16_bytes(text)
@@ -130,7 +132,8 @@ def decrypt_button_clicked():
 
     decrypted = decrypt(readfile, key_de)
     # result_label.config(text="Decrypted data: " + decrypted)
-    progress_de.insert(0, decrypted + '\n')
+    #progress_de.insert(0, decrypted + '\n')
+    progress_de.insert(tk.END, decrypted + '\n')
     # progress_de.insert(0,"\n")
 
     name = "Decrypted"
@@ -206,22 +209,18 @@ button = tk.Button(
 button.pack()
 
 # Progress
-progress_en = Entry(encryption_frame)
-progress_en.pack(fill=tk.BOTH, expand=True, pady=10, padx=20)
+progress_frame = Frame(encryption_frame)
+progress_frame.pack(fill=tk.X, padx=20 ,pady=10)
 
+v=Scrollbar(progress_frame, orient='vertical')
+v.pack(side=RIGHT, fill='y')
 
-# Progress Bar
-def pBar():
-    progBar["value"] += 10
+progress_en = Text(progress_frame,yscrollcommand=v.set)
 
+v.config(command=progress_en.yview)
 
-progBar = ttk.Progressbar(
-    encryption_frame,
-    orient=HORIZONTAL,
-    length=700,
-    mode="determinate",
-)
-progBar.pack(pady=15, padx=20)
+progress_en.pack(fill=tk.BOTH, expand=True)
+
 
 # ----------------------------------- Decryption Part -----------------------------------
 decryption_frame = Frame(notebook)
@@ -260,22 +259,17 @@ button = tk.Button(
 button.pack()
 
 # Progress
-progress_de = Entry(decryption_frame)
-progress_de.pack(fill=tk.BOTH, expand=True, pady=10, padx=20)
+progress_frame = Frame(decryption_frame)
+progress_frame.pack(fill=tk.X, padx=20 ,pady=10)
 
+v=Scrollbar(progress_frame, orient='vertical')
+v.pack(side=RIGHT, fill='y')
 
-# Progress Bar
-def pBar():
-    progBar["value"] += 10
+progress_de = Text(progress_frame,yscrollcommand=v.set)
 
+v.config(command=progress_de.yview)
 
-progBar = ttk.Progressbar(
-    decryption_frame,
-    orient=HORIZONTAL,
-    length=700,
-    mode="determinate",
-)
-progBar.pack(pady=15, padx=20)
+progress_de.pack(fill=tk.BOTH, expand=True)
 
 # result_label = tk.Label(app, text="")
 # result_label.pack()
