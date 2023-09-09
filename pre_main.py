@@ -1,4 +1,4 @@
-#Update 0.1.0
+# Update 0.3.0
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -65,50 +65,96 @@ def openfile_de():
         filepath = os.path.abspath(file.name)
         path_entry_de.insert(END, str(filepath))
 
-    
 
-def encrypt(plaintext, key):
-    cipher = AES.new(key, AES.MODE_ECB)
+def encrypt(plaintext, key_en):
+    cipher = AES.new(key_en, AES.MODE_ECB)
     padtext = pad(plaintext.encode(), AES.block_size)
     ctext = cipher.encrypt(padtext)
     encodedctext = base64.b64encode(ctext)
     return encodedctext
 
-def decrypt(ciphertext, key):
-    cipher = AES.new(key, AES.MODE_ECB)
+
+def decrypt(ciphertext, key_de):
+    cipher = AES.new(key_de, AES.MODE_ECB)
     decodedctext = base64.b64decode(ciphertext)
     padded_plaintext = cipher.decrypt(decodedctext)
     plaintext = unpad(padded_plaintext, AES.block_size)
     return plaintext.decode("utf-8")
 
+
 def encrypt_button_clicked():
+    progress_en.delete(0, END)
+    text = password_entry_en.get()
+    print(text)
+    padded_byte_object = make_16_bytes(text)
+    print(padded_byte_object)
+    print(len(padded_byte_object))
+
+    key_en = padded_byte_object
+
     plaintext = path_entry_en.get()
 
-    #openfile
+    # openfile
     f = open(plaintext, "r")
-    readfile = (f.read())
+    readfile = f.read()
     print(readfile)
-    #plaintext = f.read()
-    
-    enc = encrypt(readfile, key)
-    result_label.config(text="Encrypted data: " + enc.decode())
-    progress_en.insert(0,enc.decode())
+    # plaintext = f.read()
 
-    #creat encrypted file
+    enc = encrypt(readfile, key_en)
+    # result_label.config(text="Encrypted data: " + enc.decode())
+
+    progress_en.insert(0, enc.decode())
+    # progress_en.insert(0,"\n")
+
+    # creat encrypted file
     name = "Encrypted"
     with open(name + ".txt", "w") as f:
         f.write(enc.decode())
 
+
 def decrypt_button_clicked():
+    progress_de.delete(0, END)
+    text = password_entry_de.get()
+    print(text)
+    padded_byte_object = make_16_bytes(text)
+    print(padded_byte_object)
+    print(len(padded_byte_object))
+
+    key_de = padded_byte_object
+
     ciphertext = path_entry_de.get()
-    decrypted = decrypt(ciphertext, key)
-    result_label.config(text="Decrypted data: " + decrypted)
-    progress_de.insert(0,decrypted)
+
+    f = open(ciphertext, "r")
+    readfile = f.read()
+    print(readfile)
+
+    decrypted = decrypt(readfile, key_de)
+    # result_label.config(text="Decrypted data: " + decrypted)
+    progress_de.insert(0, decrypted)
+    # progress_de.insert(0,"\n")
+
+    name = "Decrypted"
+    with open(name + ".txt", "w") as f:
+        f.write(decrypted)
 
 
-    
+def make_16_bytes(text):
+    byte_object = bytes(text, "utf-8")
+    padding_length = 16 - len(byte_object)
+    padding = b"\x00" * padding_length
 
-key = get_random_bytes(16)
+    padded_byte_object = padding + byte_object
+
+    return padded_byte_object
+
+
+# key = get_random_bytes(16)
+# key_en = get_random_bytes(16)
+# ey_de = 0
+
+# print(key_en)
+
+# key_en = password_entry_en.get()
 
 notebook = ttk.Notebook(
     app,
@@ -145,13 +191,13 @@ password_frame.pack(fill=tk.X, padx=20)
 
 Label(password_frame, text="Password").pack(side="left")
 
-username_entry = Entry(password_frame)
-username_entry.pack(side="left", fill=tk.X, expand=True, padx=10)
+password_entry_en = Entry(password_frame)
+password_entry_en.pack(side="left", fill=tk.X, expand=True, padx=10)
 
 button = tk.Button(
     password_frame,
     text="Encryption",
-    command=lambda: [encrypt_button_clicked(),print_something()],
+    command=lambda: [encrypt_button_clicked(), print_something()],
     height=1,
     width=10,
     bg="black",
@@ -199,13 +245,13 @@ password_frame.pack(fill=tk.X, padx=20)
 
 Label(password_frame, text="Password").pack(side="left")
 
-username_entry = Entry(password_frame)
-username_entry.pack(side="left", fill=tk.X, expand=True, padx=10)
+password_entry_de = Entry(password_frame)
+password_entry_de.pack(side="left", fill=tk.X, expand=True, padx=10)
 
 button = tk.Button(
     password_frame,
     text="Decryption",
-    command=lambda: [decrypt_button_clicked(),print_something()], # can't decrypt
+    command=lambda: [decrypt_button_clicked(), print_something()],  # can't decrypt
     height=1,
     width=10,
     bg="black",
@@ -231,7 +277,7 @@ progBar = ttk.Progressbar(
 )
 progBar.pack(pady=15, padx=20)
 
-result_label = tk.Label(app, text="")
-result_label.pack()
+# result_label = tk.Label(app, text="")
+# result_label.pack()
 
 app.mainloop()

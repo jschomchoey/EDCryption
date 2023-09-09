@@ -27,7 +27,6 @@ button = tk.Button(
 )
 button.pack()
 
-
 def make_16_bytes(text):
   byte_object = bytes(text, "utf-8")
   padding_length = 16 - len(byte_object)
@@ -42,5 +41,6 @@ def encrypt_button_clicked():
     print(text)
     padded_byte_object = make_16_bytes(text)
     print(padded_byte_object)
+    print(len(padded_byte_object))
 
 app.mainloop()
