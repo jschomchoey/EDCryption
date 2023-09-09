@@ -66,16 +66,16 @@ def openfile_de():
         path_entry_de.insert(END, str(filepath))
 
 
-def encrypt(plaintext, key):
-    cipher = AES.new(key, AES.MODE_ECB)
+def encrypt(plaintext, key_en):
+    cipher = AES.new(key_en, AES.MODE_ECB)
     padtext = pad(plaintext.encode(), AES.block_size)
     ctext = cipher.encrypt(padtext)
     encodedctext = base64.b64encode(ctext)
     return encodedctext
 
 
-def decrypt(ciphertext, key):
-    cipher = AES.new(key, AES.MODE_ECB)
+def decrypt(ciphertext, key_de):
+    cipher = AES.new(key_de, AES.MODE_ECB)
     decodedctext = base64.b64decode(ciphertext)
     padded_plaintext = cipher.decrypt(decodedctext)
     plaintext = unpad(padded_plaintext, AES.block_size)
@@ -91,8 +91,8 @@ def encrypt_button_clicked():
     print(readfile)
     # plaintext = f.read()
 
-    enc = encrypt(readfile, key)
-    #result_label.config(text="Encrypted data: " + enc.decode())
+    enc = encrypt(readfile, key_en)
+    # result_label.config(text="Encrypted data: " + enc.decode())
     progress_en.delete(0, END)
     progress_en.insert(0, enc.decode())
     # progress_en.insert(0,"\n")
@@ -110,8 +110,8 @@ def decrypt_button_clicked():
     readfile = f.read()
     print(readfile)
 
-    decrypted = decrypt(readfile, key)
-    #result_label.config(text="Decrypted data: " + decrypted)
+    decrypted = decrypt(readfile, key_de)
+    # result_label.config(text="Decrypted data: " + decrypted)
     progress_de.delete(0, END)
     progress_de.insert(0, decrypted)
     # progress_de.insert(0,"\n")
@@ -120,8 +120,13 @@ def decrypt_button_clicked():
     with open(name + ".txt", "w") as f:
         f.write(decrypted)
 
+# key = get_random_bytes(16)
+key_en = get_random_bytes(16)
+key_de = key_en
 
-key = get_random_bytes(16)
+print(key_en)
+
+# key_en = password_entry_en.get()
 
 notebook = ttk.Notebook(
     app,
@@ -158,8 +163,8 @@ password_frame.pack(fill=tk.X, padx=20)
 
 Label(password_frame, text="Password").pack(side="left")
 
-username_entry = Entry(password_frame)
-username_entry.pack(side="left", fill=tk.X, expand=True, padx=10)
+password_entry_en = Entry(password_frame)
+password_entry_en.pack(side="left", fill=tk.X, expand=True, padx=10)
 
 button = tk.Button(
     password_frame,
@@ -212,8 +217,8 @@ password_frame.pack(fill=tk.X, padx=20)
 
 Label(password_frame, text="Password").pack(side="left")
 
-username_entry = Entry(password_frame)
-username_entry.pack(side="left", fill=tk.X, expand=True, padx=10)
+password_entry_de = Entry(password_frame)
+password_entry_de.pack(side="left", fill=tk.X, expand=True, padx=10)
 
 button = tk.Button(
     password_frame,
@@ -244,7 +249,7 @@ progBar = ttk.Progressbar(
 )
 progBar.pack(pady=15, padx=20)
 
-#result_label = tk.Label(app, text="")
-#result_label.pack()
+# result_label = tk.Label(app, text="")
+# result_label.pack()
 
 app.mainloop()
