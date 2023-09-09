@@ -1,4 +1,4 @@
-# Update 0.1.0
+# Update 1.0.0
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -83,18 +83,27 @@ def decrypt(ciphertext, key_de):
 
 
 def encrypt_button_clicked():
+    progress_en.delete(0, END)
+    text = password_entry_en.get()
+    print(text)
+    padded_byte_object = make_16_bytes(text)
+    print(padded_byte_object)
+    print(len(padded_byte_object))
+
+    key_en = padded_byte_object
+
     plaintext = path_entry_en.get()
 
     # openfile
-    f = open(plaintext, "r")
+    f = open(plaintext, "r" ,encoding="utf8")
     readfile = f.read()
     print(readfile)
     # plaintext = f.read()
 
     enc = encrypt(readfile, key_en)
     # result_label.config(text="Encrypted data: " + enc.decode())
-    progress_en.delete(0, END)
-    progress_en.insert(0, enc.decode())
+
+    progress_en.insert(0, enc.decode() + '\n')
     # progress_en.insert(0,"\n")
 
     # creat encrypted file
@@ -104,6 +113,15 @@ def encrypt_button_clicked():
 
 
 def decrypt_button_clicked():
+    progress_de.delete(0, END)
+    text = password_entry_de.get()
+    print(text)
+    padded_byte_object = make_16_bytes(text)
+    print(padded_byte_object)
+    print(len(padded_byte_object))
+
+    key_de = padded_byte_object
+
     ciphertext = path_entry_de.get()
 
     f = open(ciphertext, "r")
@@ -112,19 +130,29 @@ def decrypt_button_clicked():
 
     decrypted = decrypt(readfile, key_de)
     # result_label.config(text="Decrypted data: " + decrypted)
-    progress_de.delete(0, END)
-    progress_de.insert(0, decrypted)
+    progress_de.insert(0, decrypted + '\n')
     # progress_de.insert(0,"\n")
 
     name = "Decrypted"
-    with open(name + ".txt", "w") as f:
+    with open(name + ".txt", "w",encoding="utf8") as f:
         f.write(decrypted)
 
-# key = get_random_bytes(16)
-key_en = get_random_bytes(16)
-key_de = key_en
 
-print(key_en)
+def make_16_bytes(text):
+    byte_object = bytes(text, "utf-8")
+    padding_length = 16 - len(byte_object)
+    padding = b"\x00" * padding_length
+
+    padded_byte_object = padding + byte_object
+
+    return padded_byte_object
+
+
+# key = get_random_bytes(16)
+# key_en = get_random_bytes(16)
+# ey_de = 0
+
+# print(key_en)
 
 # key_en = password_entry_en.get()
 

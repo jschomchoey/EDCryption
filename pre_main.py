@@ -1,4 +1,4 @@
-# Update 0.3.0
+# Update 1.0.0
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -95,7 +95,7 @@ def encrypt_button_clicked():
     plaintext = path_entry_en.get()
 
     # openfile
-    f = open(plaintext, "r")
+    f = open(plaintext, "r" ,encoding="utf8")
     readfile = f.read()
     print(readfile)
     # plaintext = f.read()
@@ -103,7 +103,7 @@ def encrypt_button_clicked():
     enc = encrypt(readfile, key_en)
     # result_label.config(text="Encrypted data: " + enc.decode())
 
-    progress_en.insert(0, enc.decode())
+    progress_en.insert(0, enc.decode() + '\n')
     # progress_en.insert(0,"\n")
 
     # creat encrypted file
@@ -130,11 +130,11 @@ def decrypt_button_clicked():
 
     decrypted = decrypt(readfile, key_de)
     # result_label.config(text="Decrypted data: " + decrypted)
-    progress_de.insert(0, decrypted)
+    progress_de.insert(0, decrypted + '\n')
     # progress_de.insert(0,"\n")
 
     name = "Decrypted"
-    with open(name + ".txt", "w") as f:
+    with open(name + ".txt", "w",encoding="utf8") as f:
         f.write(decrypted)
 
 
