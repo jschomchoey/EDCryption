@@ -1,4 +1,4 @@
-# Update 1.2.0
+# Update 1.2.1
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
