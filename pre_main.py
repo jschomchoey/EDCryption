@@ -48,7 +48,6 @@ def openfile_en():
         path_entry_en.delete(0, END)
         filepath = os.path.abspath(file.name)
         path_entry_en.insert(END, str(filepath))
-        # progress_en.insert(0,"Test")
 
 
 def openfile_de():
@@ -65,6 +64,8 @@ def openfile_de():
         path_entry_de.delete(0, END)
         filepath = os.path.abspath(file.name)
         path_entry_de.insert(END, str(filepath))
+
+    
 
 def encrypt(plaintext, key):
     cipher = AES.new(key, AES.MODE_ECB)
@@ -83,20 +84,29 @@ def decrypt(ciphertext, key):
 def encrypt_button_clicked():
     plaintext = path_entry_en.get()
 
-    f = open("examplefile/textfile.txt", "r")
-    print(f.read())
-
+    #openfile
+    f = open(plaintext, "r")
+    readfile = (f.read())
+    print(readfile)
     #plaintext = f.read()
     
-    enc = encrypt(plaintext, key)
+    enc = encrypt(readfile, key)
     result_label.config(text="Encrypted data: " + enc.decode())
     progress_en.insert(0,enc.decode())
+
+    #creat encrypted file
+    name = "Encrypted"
+    with open(name + ".txt", "w") as f:
+        f.write(enc.decode())
 
 def decrypt_button_clicked():
     ciphertext = path_entry_de.get()
     decrypted = decrypt(ciphertext, key)
     result_label.config(text="Decrypted data: " + decrypted)
     progress_de.insert(0,decrypted)
+
+
+    
 
 key = get_random_bytes(16)
 
