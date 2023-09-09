@@ -12,6 +12,8 @@ from Crypto.Util.Padding import pad, unpad
 from Crypto.Random import get_random_bytes
 import base64
 
+import codecs
+
 # Screen
 app = tk.Tk()
 app.title("Encryption / Decryption")
@@ -21,15 +23,21 @@ app.minsize(700, 350)
 app.maxsize(700, 350)
 app.resizable(False, False)
 
+icon = PhotoImage(file = 'icon.png')
+app.iconphoto(False, icon)
+
 # Object
 def print_something():
     print("Button working!")
 
+
 def switch_to_encryption_page():
     notebook.select(encryption_frame)
 
+
 def switch_to_decryption_page():
     notebook.select(decryption_frame)
+
 
 def openfile_en():
     file = filedialog.askopenfile(
@@ -46,6 +54,7 @@ def openfile_en():
         filepath = os.path.abspath(file.name)
         path_entry_en.insert(END, str(filepath))
 
+
 def openfile_de():
     file = filedialog.askopenfile(
         mode="r",
@@ -61,12 +70,14 @@ def openfile_de():
         filepath = os.path.abspath(file.name)
         path_entry_de.insert(END, str(filepath))
 
+
 def encrypt(plaintext, key_en):
     cipher = AES.new(key_en, AES.MODE_ECB)
     padtext = pad(plaintext.encode(), AES.block_size)
     ctext = cipher.encrypt(padtext)
     encodedctext = base64.b64encode(ctext)
     return encodedctext
+
 
 def decrypt(ciphertext, key_de):
     cipher = AES.new(key_de, AES.MODE_ECB)
@@ -75,8 +86,12 @@ def decrypt(ciphertext, key_de):
     plaintext = unpad(padded_plaintext, AES.block_size)
     return plaintext.decode("utf-8")
 
+
 def encrypt_button_clicked():
-    progress_en.delete("1.0","end")
+    progress_en.delete("1.0", "end")
+
+    
+    
     text = password_entry_en.get()
     print(text)
     padded_byte_object = make_16_bytes(text)
@@ -87,20 +102,30 @@ def encrypt_button_clicked():
 
     plaintext = path_entry_en.get()
 
+    #read input file
+    with codecs.open(plaintext, 'r', encoding = 'utf8') as file:
+        lines = file.read()
+
+    #write output file
+    with codecs.open(plaintext, 'w', encoding = 'utf8') as file:
+        file.write(lines)
+
     # openfile
-    f = open(plaintext, "r" ,encoding="utf8")
+    f = open(plaintext, "r", encoding="utf8")
     readfile = f.read()
     print(readfile)
     enc = encrypt(readfile, key_en)
-    progress_en.insert(tk.END, enc.decode() + '\n')
+    progress_en.insert(tk.END, enc.decode() + "\n")
+
 
     # creat encrypted file
     name = "Encrypted"
     with open(name + ".txt", "w") as f:
         f.write(enc.decode())
 
+
 def decrypt_button_clicked():
-    progress_de.delete("1.0","end")
+    progress_de.delete("1.0", "end")
     text = password_entry_de.get()
     print(text)
     padded_byte_object = make_16_bytes(text)
@@ -115,10 +140,10 @@ def decrypt_button_clicked():
     print(readfile)
 
     decrypted = decrypt(readfile, key_de)
-    progress_de.insert(tk.END, decrypted + '\n')
+    progress_de.insert(tk.END, decrypted + "\n")
 
     name = "Decrypted"
-    with open(name + ".txt", "w",encoding="utf8") as f:
+    with open(name + ".txt", "w", encoding="utf8") as f:
         f.write(decrypted)
 
 
@@ -130,6 +155,7 @@ def make_16_bytes(text):
     padded_byte_object = padding + byte_object
 
     return padded_byte_object
+
 
 notebook = ttk.Notebook(
     app,
@@ -182,12 +208,12 @@ button.pack()
 
 # Progress
 progress_frame = Frame(encryption_frame)
-progress_frame.pack(fill=tk.X, padx=20 ,pady=10)
+progress_frame.pack(fill=tk.X, padx=20, pady=10)
 
-v=Scrollbar(progress_frame, orient='vertical')
-v.pack(side=RIGHT, fill='y')
+v = Scrollbar(progress_frame, orient="vertical")
+v.pack(side=RIGHT, fill="y")
 
-progress_en = Text(progress_frame,yscrollcommand=v.set)
+progress_en = Text(progress_frame, yscrollcommand=v.set)
 
 v.config(command=progress_en.yview)
 
@@ -232,12 +258,12 @@ button.pack()
 
 # Progress
 progress_frame = Frame(decryption_frame)
-progress_frame.pack(fill=tk.X, padx=20 ,pady=10)
+progress_frame.pack(fill=tk.X, padx=20, pady=10)
 
-v=Scrollbar(progress_frame, orient='vertical')
-v.pack(side=RIGHT, fill='y')
+v = Scrollbar(progress_frame, orient="vertical")
+v.pack(side=RIGHT, fill="y")
 
-progress_de = Text(progress_frame,yscrollcommand=v.set)
+progress_de = Text(progress_frame, yscrollcommand=v.set)
 
 v.config(command=progress_de.yview)
 
