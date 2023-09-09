@@ -6,5 +6,5 @@ GUI using Python Tkinter.
 
 and I will update to support encryption/decryption picture, audio and video soon.
 
-### Update 1.2.0
+### EDCryption v1.2.0-beta
 - Fix plaintext file encoding bug
