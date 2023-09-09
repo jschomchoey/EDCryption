@@ -1,4 +1,4 @@
-# Update 1.1.1
+# Update 1.2.0
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -12,7 +12,7 @@ from Crypto.Util.Padding import pad, unpad
 from Crypto.Random import get_random_bytes
 import base64
 
-import codecs
+import chardet
 
 # Screen
 app = tk.Tk()
@@ -23,8 +23,6 @@ app.minsize(700, 350)
 app.maxsize(700, 350)
 app.resizable(False, False)
 
-icon = PhotoImage(file = 'icon.png')
-app.iconphoto(False, icon)
 
 # Object
 def print_something():
@@ -90,8 +88,6 @@ def decrypt(ciphertext, key_de):
 def encrypt_button_clicked():
     progress_en.delete("1.0", "end")
 
-    
-    
     text = password_entry_en.get()
     print(text)
     padded_byte_object = make_16_bytes(text)
@@ -102,21 +98,19 @@ def encrypt_button_clicked():
 
     plaintext = path_entry_en.get()
 
-    #read input file
-    with codecs.open(plaintext, 'r', encoding = 'utf8') as file:
-        lines = file.read()
+    rawdata = open(plaintext, "rb").read()
+    result = chardet.detect(rawdata)
+    charenc = result["encoding"]
+    print(charenc)
+    if charenc == "utf-8":
+        f = open(plaintext, "r", encoding="utf8")
+    else:
+        f = open(plaintext, "r", encoding="ansi")
 
-    #write output file
-    with codecs.open(plaintext, 'w', encoding = 'utf8') as file:
-        file.write(lines)
-
-    # openfile
-    f = open(plaintext, "r", encoding="utf8")
     readfile = f.read()
     print(readfile)
     enc = encrypt(readfile, key_en)
     progress_en.insert(tk.END, enc.decode() + "\n")
-
 
     # creat encrypted file
     name = "Encrypted"
