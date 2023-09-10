@@ -22,7 +22,7 @@ app.resizable(False, False)
 
 # Object
 def print_something():
-    print("Button working!")
+    print("Button")
 
 
 def switch_to_encryption_page():
