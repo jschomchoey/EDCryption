@@ -1,4 +1,4 @@
-# Update 1.3.0
+# Update 1.3.1
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -9,10 +9,6 @@ import tkinter as tk
 
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
-from Crypto.Random import get_random_bytes
-import base64
-
-import chardet
 
 # Screen
 app = tk.Tk()
@@ -78,7 +74,6 @@ def encrypt_file(input_file, output_file, key):
         outfile.write(tag)
         outfile.write(ciphertext)
 
-
 def decrypt_file(input_file, output_file, key):
     with open(input_file, "rb") as infile, open(output_file, "wb") as outfile:
         nonce = infile.read(16)
@@ -87,7 +82,7 @@ def decrypt_file(input_file, output_file, key):
         ciphertext = infile.read()
 
         try:
-            plaintext = cipher.decrypt_and_verify(ciphertext, tag)
+            plaintext = cipher.decrypt(ciphertext)
             outfile.write(plaintext)
         except ValueError:
             print("Decryption failed. The key may be incorrect.")
