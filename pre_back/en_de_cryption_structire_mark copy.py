@@ -12,7 +12,7 @@ def encrypt_file(input_file, output_file, key):
         outfile.write(ciphertext)
 
 def decrypt_file(input_file, output_file, key):
-    key = get_random_bytes(16)
+    
     with open(input_file, 'rb') as infile, open(output_file, 'wb') as outfile:
         nonce = infile.read(16)
         tag = infile.read(16)

@@ -1,4 +1,4 @@
-# Update 1.3.0
+# Update 1.3.1
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -9,6 +9,8 @@ import tkinter as tk
 
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
+
+import hashlib
 
 # Screen
 app = tk.Tk()
@@ -22,7 +24,7 @@ app.resizable(False, False)
 
 # Object
 def print_something():
-    print("Button working!")
+    print("Button")
 
 
 def switch_to_encryption_page():
@@ -105,7 +107,18 @@ def encrypt_button_clicked():
     encrypt_file(plaintext, encrypted_file, key_en)
     print(f"File '{plaintext}' has been encrypted and saved as '{encrypted_file}'.")
 
-    progress_en.insert(tk.END, plaintext + "\n")
+    md5check = plaintext
+    md5_hash = hashlib.md5()
+    with open(md5check,"rb") as f:
+        # Read and update hash in chunks of 4K
+        for byte_block in iter(lambda: f.read(4096),b""):
+            md5_hash.update(byte_block)
+    
+    progress_en.insert(tk.END, 'Input File:  ' + plaintext + "\n")
+    progress_en.insert(tk.END, 'MD5 Checksum:  ' + md5_hash.hexdigest() + "\n")
+    dir_path = os.path.dirname(os.path.realpath(encrypted_file))
+    progress_en.insert(tk.END, 'File encrypted as:  ' + dir_path +'\\' + encrypted_file + "\n")
+    
 
 
 def decrypt_button_clicked():
@@ -121,7 +134,18 @@ def decrypt_button_clicked():
 
     decrypted_file = "decrypted_file.txt"
     decrypt_file(ciphertext, decrypted_file, key_de)
-    print(f"File '{ciphertext}' has been decrypted and saved as '{decrypted_file}'.")
+
+    md5check = decrypted_file
+    md5_hash = hashlib.md5()
+    with open(md5check,"rb") as f:
+        # Read and update hash in chunks of 4K
+        for byte_block in iter(lambda: f.read(4096),b""):
+            md5_hash.update(byte_block)
+
+    progress_de.insert(tk.END, 'Input File:  ' + ciphertext + "\n")
+    progress_de.insert(tk.END, 'MD5 Checksum:  ' + md5_hash.hexdigest() + "\n")
+    dir_path = os.path.dirname(os.path.realpath(decrypted_file))
+    progress_de.insert(tk.END, 'File encrypted as:  ' + dir_path +'\\' + decrypted_file +"\n")
 
 
 def make_16_bytes(text):
@@ -169,7 +193,7 @@ password_frame.pack(fill=tk.X, padx=20)
 
 Label(password_frame, text="Password").pack(side="left")
 
-password_entry_en = Entry(password_frame)
+password_entry_en = Entry(password_frame,show="*")
 password_entry_en.pack(side="left", fill=tk.X, expand=True, padx=10)
 
 button = tk.Button(
@@ -219,7 +243,7 @@ password_frame.pack(fill=tk.X, padx=20)
 
 Label(password_frame, text="Password").pack(side="left")
 
-password_entry_de = Entry(password_frame)
+password_entry_de = Entry(password_frame,show="*")
 password_entry_de.pack(side="left", fill=tk.X, expand=True, padx=10)
 
 button = tk.Button(
