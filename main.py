@@ -1,4 +1,4 @@
-# Update 1.2.1
+# Update 1.3.0
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -69,20 +69,28 @@ def openfile_de():
         path_entry_de.insert(END, str(filepath))
 
 
-def encrypt(plaintext, key_en):
-    cipher = AES.new(key_en, AES.MODE_ECB)
-    padtext = pad(plaintext.encode(), AES.block_size)
-    ctext = cipher.encrypt(padtext)
-    encodedctext = base64.b64encode(ctext)
-    return encodedctext
+def encrypt_file(input_file, output_file, key):
+    cipher = AES.new(key, AES.MODE_EAX)
+
+    with open(input_file, "rb") as infile, open(output_file, "wb") as outfile:
+        ciphertext, tag = cipher.encrypt_and_digest(infile.read())
+        outfile.write(cipher.nonce)
+        outfile.write(tag)
+        outfile.write(ciphertext)
 
 
-def decrypt(ciphertext, key_de):
-    cipher = AES.new(key_de, AES.MODE_ECB)
-    decodedctext = base64.b64decode(ciphertext)
-    padded_plaintext = cipher.decrypt(decodedctext)
-    plaintext = unpad(padded_plaintext, AES.block_size)
-    return plaintext.decode("utf-8")
+def decrypt_file(input_file, output_file, key):
+    with open(input_file, "rb") as infile, open(output_file, "wb") as outfile:
+        nonce = infile.read(16)
+        tag = infile.read(16)
+        cipher = AES.new(key, AES.MODE_EAX, nonce=nonce)
+        ciphertext = infile.read()
+
+        try:
+            plaintext = cipher.decrypt_and_verify(ciphertext, tag)
+            outfile.write(plaintext)
+        except ValueError:
+            print("Decryption failed. The key may be incorrect.")
 
 
 def encrypt_button_clicked():
@@ -93,29 +101,16 @@ def encrypt_button_clicked():
     padded_byte_object = make_16_bytes(text)
     print(padded_byte_object)
     print(len(padded_byte_object))
-
     key_en = padded_byte_object
 
     plaintext = path_entry_en.get()
 
-    rawdata = open(plaintext, "rb").read()
-    result = chardet.detect(rawdata)
-    charenc = result["encoding"]
-    print(charenc)
-    if charenc == "utf-8":
-        f = open(plaintext, "r", encoding="utf8")
-    else:
-        f = open(plaintext, "r", encoding="ansi")
+    encrypted_file = "encrypted_file.txt"
 
-    readfile = f.read()
-    print(readfile)
-    enc = encrypt(readfile, key_en)
-    progress_en.insert(tk.END, enc.decode() + "\n")
+    encrypt_file(plaintext, encrypted_file, key_en)
+    print(f"File '{plaintext}' has been encrypted and saved as '{encrypted_file}'.")
 
-    # creat encrypted file
-    name = "Encrypted"
-    with open(name + ".txt", "w") as f:
-        f.write(enc.decode())
+    progress_en.insert(tk.END, plaintext + "\n")
 
 
 def decrypt_button_clicked():
@@ -129,16 +124,9 @@ def decrypt_button_clicked():
     key_de = padded_byte_object
     ciphertext = path_entry_de.get()
 
-    f = open(ciphertext, "r")
-    readfile = f.read()
-    print(readfile)
-
-    decrypted = decrypt(readfile, key_de)
-    progress_de.insert(tk.END, decrypted + "\n")
-
-    name = "Decrypted"
-    with open(name + ".txt", "w", encoding="utf8") as f:
-        f.write(decrypted)
+    decrypted_file = "decrypted_file.txt"
+    decrypt_file(ciphertext, decrypted_file, key_de)
+    print(f"File '{ciphertext}' has been decrypted and saved as '{decrypted_file}'.")
 
 
 def make_16_bytes(text):
