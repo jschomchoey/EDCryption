@@ -1,4 +1,4 @@
-# Update 1.3.3
+# Update 1.3.4
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -151,7 +151,7 @@ def decrypt_button_clicked():
     progress_de.insert(tk.END, "MD5 Checksum:  " + md5_hash.hexdigest() + "\n")
     dir_path = os.path.dirname(os.path.realpath(decrypted_file))
     progress_de.insert(
-        tk.END, "File encrypted as:  " + dir_path + "\\" + decrypted_file + "\n"
+        tk.END, "File decrypted as:  " + dir_path + "\\" + decrypted_file + "\n"
     )
 
 
