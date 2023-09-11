@@ -1,4 +1,4 @@
-# Update 1.3.4
+# Update 1.4.0
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -37,10 +37,11 @@ def openfile_en():
     file = filedialog.askopenfile(
         mode="r",
         filetypes=[
+            ("All Files", "*.*"),
             ("Text Files", "*.txt"),
             ("Picture Files", "*.png *.jpg *.jpeg"),
+            ("Music Files", "*.mp3"),
             ("Video Files", "*.mp4 *.mov"),
-            ("All Files", "*.*"),
         ],
     )
     if file:
@@ -54,16 +55,23 @@ def openfile_de():
     file = filedialog.askopenfile(
         mode="r",
         filetypes=[
+            ("All Files", "*.*"),
             ("Text Files", "*.txt"),
             ("Picture Files", "*.png *.jpg *.jpeg"),
+            ("Music Files", "*.mp3"),
             ("Video Files", "*.mp4 *.mov"),
-            ("All Files", "*."),
         ],
     )
     if file:
         path_entry_de.delete(0, END)
         filepath = os.path.abspath(file.name)
         path_entry_de.insert(END, str(filepath))
+
+
+def filetype(plaintext):
+    file_name, file_extension = os.path.splitext(plaintext)
+    print(file_extension)
+    return file_extension
 
 
 # encrytion function
@@ -106,7 +114,9 @@ def encrypt_button_clicked():
 
     plaintext = path_entry_en.get()
 
-    encrypted_file = "encrypted_file.txt"
+    filetype_en = filetype(plaintext)
+
+    encrypted_file = "encrypted_file" + filetype_en
 
     encrypt_file(plaintext, encrypted_file, key_en)
 
@@ -137,7 +147,9 @@ def decrypt_button_clicked():
     key_de = padded_byte_object
     ciphertext = path_entry_de.get()
 
-    decrypted_file = "decrypted_file.txt"
+    filetype_de = filetype(ciphertext)
+    decrypted_file = "decrypted_file" + filetype_de
+
     decrypt_file(ciphertext, decrypted_file, key_de)
 
     md5check = decrypted_file
