@@ -222,8 +222,6 @@ button = tk.Button(
     command=lambda: [encrypt_button_clicked()],
     height=1,
     width=10,
-    bg="black",
-    fg="#fff",
 )
 button.pack()
 
