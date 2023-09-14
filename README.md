@@ -6,7 +6,7 @@ GUI using Python Tkinter.
 
 and I will update to support encryption/decryption picture, audio and video soon.
 
-### EDCryption v1.4.0-beta Pre-release
+### EDCryption v1.4.0-beta
 
 - Add to support all file extension
 
