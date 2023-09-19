@@ -1,4 +1,4 @@
-# Update v1.4.1-beta
+# Update v1.4.2-beta
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -15,7 +15,7 @@ import hashlib
 
 # screen
 app = tk.Tk()
-app.title("EDCryption 1.4.1")
+app.title("EDCryption 1.4.2")
 #app.config(bg="skyblue")
 
 app.minsize(800, 400)
