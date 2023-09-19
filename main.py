@@ -15,8 +15,8 @@ import hashlib
 
 # screen
 app = tk.Tk()
-app.title("EDCryption 1.4.2")
-#app.config(bg="skyblue")
+app.title("EDCryption 1.4.2 Beta")
+# app.config(bg="skyblue")
 
 app.minsize(800, 400)
 app.maxsize(800, 400)
