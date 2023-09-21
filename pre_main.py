@@ -45,7 +45,7 @@ def openfile_en():
         filetypes=[
             ("All Files", "*.*"),
             ("Text Files", "*.txt"),
-            ("Picture Files", "*.png *.jpg *.jpeg"),
+            ("Picture Files", "*.bmp *.png *.jpg *.jpeg"),
             ("Music Files", "*.mp3"),
             ("Video Files", "*.mp4 *.mov"),
         ],
@@ -63,7 +63,7 @@ def openfile_de():
         filetypes=[
             ("All Files", "*.*"),
             ("Text Files", "*.txt"),
-            ("Picture Files", "*.png *.jpg *.jpeg"),
+            ("Picture Files", "*bmp *.png *.jpg *.jpeg"),
             ("Music Files", "*.mp3"),
             ("Video Files", "*.mp4 *.mov"),
         ],
@@ -164,16 +164,16 @@ def encrypt_button_clicked():
         encrypt_file(plaintext, encrypted_file, key_en)
 
     # md5 check
-    md5check = plaintext
-    md5_hash = hashlib.md5()
-    with open(md5check, "rb") as f:
+    #md5check = plaintext
+    #md5_hash = hashlib.md5()
+    #with open(md5check, "rb") as f:
         # Read and update hash in chunks of 4K
-        for byte_block in iter(lambda: f.read(4096), b""):
-            md5_hash.update(byte_block)
+        #for byte_block in iter(lambda: f.read(4096), b""):
+            #md5_hash.update(byte_block)
 
     # print
     progress_en.insert(tk.END, "Input File:  " + plaintext + "\n")
-    progress_en.insert(tk.END, "MD5 Checksum:  " + md5_hash.hexdigest() + "\n")
+    #progress_en.insert(tk.END, "MD5 Checksum:  " + md5_hash.hexdigest() + "\n")
     dir_path = os.path.dirname(os.path.realpath(encrypted_file))
     progress_en.insert(
         tk.END, "File encrypted as:  " + dir_path + "\\" + encrypted_file + "\n"
@@ -195,17 +195,53 @@ def decrypt_button_clicked():
     filetype_de = filetype(ciphertext)
     decrypted_file = "decrypted_file" + filetype_de
 
-    decrypt_file(ciphertext, decrypted_file, key_de)
+    if (
+        filetype_de == ".png"
+        or filetype_de == ".jpg"
+        or filetype_de == ".jpeg"
+        or filetype_de == ".ppm"
+        or filetype_de == ".gif"
+        or filetype_de == ".tiff"
+        or filetype_de == ".bmp"
+    ):
+        # image encrypt
+        if filetype_de == ".png":
+            format = "png"
+        elif filetype_de == ".jpg":
+            format = "jpeg"
+        elif filetype_de == ".jpeg":
+            format = "jpeg"
+        elif filetype_de == ".ppm":
+            format = "ppm"
+        elif filetype_de == ".gif":
+            format = "gif"
+        elif filetype_de == ".tiff":
+            format = "tiff"
+        elif filetype_de == ".bmp":
+            format = "bmp"
 
-    md5check = decrypted_file
-    md5_hash = hashlib.md5()
-    with open(md5check, "rb") as f:
+        print("image file detected")
+        filename_out = "encrypted_img"
+        filename = ciphertext
+        key = key_de
+        ##process_image(filename, key, format, filename_out)
+        decrypt_image(filename_out ,filename ,format,key)
+        md5check = filename_out
+    else:
+        # all file encrypt
+        print("non-image file detected")
+        decrypt_file(ciphertext, decrypted_file, key_de)
+        md5check = decrypted_file
+
+    
+    #md5_hash = hashlib.md5()
+    #with open(md5check, "rb") as f:
         # Read and update hash in chunks of 4K
-        for byte_block in iter(lambda: f.read(4096), b""):
-            md5_hash.update(byte_block)
+        #for byte_block in iter(lambda: f.read(4096), b""):
+            #md5_hash.update(byte_block)
 
     progress_de.insert(tk.END, "Input File:  " + ciphertext + "\n")
-    progress_de.insert(tk.END, "MD5 Checksum:  " + md5_hash.hexdigest() + "\n")
+    #progress_de.insert(tk.END, "MD5 Checksum:  " + md5_hash.hexdigest() + "\n")
     dir_path = os.path.dirname(os.path.realpath(decrypted_file))
     progress_de.insert(
         tk.END, "File decrypted as:  " + dir_path + "\\" + decrypted_file + "\n"
@@ -269,7 +305,7 @@ def aes_cbc_decrypt(key, data, mode=AES.MODE_CBC):
 
 
 # Decrypt the previously encrypted image
-def decrypt_image(filename):
+def decrypt_image(filename_out , filename,format,key):
     im = Image.open(filename)
     data = im.convert("RGB").tobytes()
 
@@ -280,7 +316,7 @@ def decrypt_image(filename):
     im2.putdata(convert_to_RGB(decrypted_data))
 
     # Save the decrypted image
-    im2.save("decrypted_" + filename_out + "." + format, format)
+    im2.save("decrypted" + "." + format, format)
 
 
 def pad(data):

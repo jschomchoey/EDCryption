@@ -1,9 +1,9 @@
 from PIL import Image
 from Crypto.Cipher import AES
 
-filename = "/Users/jschomchoey/Data/Code/EDCryption/examplefile/Image/Dark Geometric.jpg"
+filename = "/Users/jschomchoey/Data/Code/EDCryption/examplefile/Image/Forest.jpeg"
 filename_out = "encrypted_img"
-format = "jpg"
+format = "jpeg"
 key = "aaaabbbbccccdddd"
 
 
