@@ -1,11 +1,12 @@
-# Update 1.3.4
+# Update v1.4.2-beta
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter.filedialog import askopenfile
-import os
 import tkinter as tk
+
+import os
 
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
@@ -14,11 +15,11 @@ import hashlib
 
 # screen
 app = tk.Tk()
-app.title("Encryption / Decryption")
-app.config(bg="skyblue")
+app.title("EDCryption 1.4.2 Beta")
+# app.config(bg="skyblue")
 
-app.minsize(700, 350)
-app.maxsize(700, 350)
+app.minsize(800, 400)
+app.maxsize(800, 400)
 app.resizable(False, False)
 
 
@@ -222,8 +223,6 @@ button = tk.Button(
     command=lambda: [encrypt_button_clicked()],
     height=1,
     width=10,
-    bg="black",
-    fg="#fff",
 )
 button.pack()
 
@@ -275,8 +274,6 @@ button = tk.Button(
     command=lambda: [decrypt_button_clicked()],
     height=1,
     width=10,
-    bg="black",
-    fg="#fff",
 )
 button.pack()
 
