@@ -110,6 +110,7 @@ def decrypt_file(input_file, output_file, key):
 # press encrytion button
 def encrypt_button_clicked():
     progress_en.delete("1.0", "end")
+    progress_en.insert(tk.END, "Encrypting... \n")
 
     text = password_entry_en.get()
     print(text)
@@ -137,7 +138,6 @@ def encrypt_button_clicked():
         or filetype_en == ".gif"
         or filetype_en == ".tiff"
         or filetype_en == ".bmp"
-        or filetype_en == ".pdf"
     ):
         # image encrypt
         if filetype_en == ".png":
@@ -154,8 +154,6 @@ def encrypt_button_clicked():
             format = "tiff"
         elif filetype_en == ".bmp":
             format = "bmp"
-        elif filetype_en == ".pdf":
-            format = "pdf"
 
         print("image file detected")
         filename_out = "encrypted_img"
@@ -187,6 +185,7 @@ def encrypt_button_clicked():
 # press decrytion button
 def decrypt_button_clicked():
     progress_de.delete("1.0", "end")
+    progress_de.insert(tk.END, "Decrypting... \n")
     text = password_entry_de.get()
     print(text)
     padded_byte_object = make_16_bytes(text)
@@ -207,7 +206,6 @@ def decrypt_button_clicked():
         or filetype_de == ".gif"
         or filetype_de == ".tiff"
         or filetype_de == ".bmp"
-        or filetype_de == ".pdf"
     ):
         # image encrypt
         if filetype_de == ".png":
@@ -224,8 +222,6 @@ def decrypt_button_clicked():
             format = "tiff"
         elif filetype_de == ".bmp":
             format = "bmp"
-        elif filetype_de == ".pdf":
-            format = "pdf"
 
         print("image file detected")
         filename_out = "encrypted_img"
@@ -343,7 +339,7 @@ notebook = ttk.Notebook(
 )
 notebook.pack(fill=tk.BOTH, expand=True)
 style = ttk.Style()
-style.configure("TNotebook.Tab", padding=(141, 7))
+style.configure("TNotebook.Tab", padding=(150, 7))
 
 # ----------------------------------- Encryption Part -----------------------------------
 encryption_frame = Frame(
