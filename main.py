@@ -1,4 +1,4 @@
-# Update v1.4.2-beta
+# Update v1.5.1-beta
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -8,14 +8,18 @@ import tkinter as tk
 
 import os
 
+from pathlib import Path
+
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 
 import hashlib
 
+from PIL import Image
+
 # screen
 app = tk.Tk()
-app.title("EDCryption 1.4.2 Beta")
+app.title("EDCryption 1.5.1 Beta")
 # app.config(bg="skyblue")
 
 app.minsize(800, 400)
@@ -40,7 +44,8 @@ def openfile_en():
         filetypes=[
             ("All Files", "*.*"),
             ("Text Files", "*.txt"),
-            ("Picture Files", "*.png *.jpg *.jpeg"),
+            ("Picture Files", "*.bmp *.png *.jpg *.jpeg"),
+            ("Vector Files", "*.pdf"),
             ("Music Files", "*.mp3"),
             ("Video Files", "*.mp4 *.mov"),
         ],
@@ -58,7 +63,8 @@ def openfile_de():
         filetypes=[
             ("All Files", "*.*"),
             ("Text Files", "*.txt"),
-            ("Picture Files", "*.png *.jpg *.jpeg"),
+            ("Picture Files", "*bmp *.png *.jpg *.jpeg"),
+            ("Vector Files", "*.pdf"),
             ("Music Files", "*.mp3"),
             ("Video Files", "*.mp4 *.mov"),
         ],
@@ -108,28 +114,70 @@ def encrypt_button_clicked():
     text = password_entry_en.get()
     print(text)
 
+    # print key
     padded_byte_object = make_16_bytes(text)
     print(padded_byte_object)
     print(len(padded_byte_object))
     key_en = padded_byte_object
 
+    # path file
     plaintext = path_entry_en.get()
 
     filetype_en = filetype(plaintext)
 
     encrypted_file = "encrypted_file" + filetype_en
 
-    encrypt_file(plaintext, encrypted_file, key_en)
+    print(filetype_en)
 
-    md5check = plaintext
-    md5_hash = hashlib.md5()
-    with open(md5check, "rb") as f:
-        # Read and update hash in chunks of 4K
-        for byte_block in iter(lambda: f.read(4096), b""):
-            md5_hash.update(byte_block)
+    if (
+        filetype_en == ".png"
+        or filetype_en == ".jpg"
+        or filetype_en == ".jpeg"
+        or filetype_en == ".ppm"
+        or filetype_en == ".gif"
+        or filetype_en == ".tiff"
+        or filetype_en == ".bmp"
+        or filetype_en == ".pdf"
+    ):
+        # image encrypt
+        if filetype_en == ".png":
+            format = "png"
+        elif filetype_en == ".jpg":
+            format = "jpeg"
+        elif filetype_en == ".jpeg":
+            format = "jpeg"
+        elif filetype_en == ".ppm":
+            format = "ppm"
+        elif filetype_en == ".gif":
+            format = "gif"
+        elif filetype_en == ".tiff":
+            format = "tiff"
+        elif filetype_en == ".bmp":
+            format = "bmp"
+        elif filetype_en == ".pdf":
+            format = "pdf"
 
+        print("image file detected")
+        filename_out = "encrypted_img"
+        filename = plaintext
+        key = key_en
+        process_image(filename, key, format, filename_out)
+    else:
+        # all file encrypt
+        print("non-image file detected")
+        encrypt_file(plaintext, encrypted_file, key_en)
+
+    # md5 check
+    # md5check = plaintext
+    # md5_hash = hashlib.md5()
+    # with open(md5check, "rb") as f:
+    # Read and update hash in chunks of 4K
+    # for byte_block in iter(lambda: f.read(4096), b""):
+    # md5_hash.update(byte_block)
+
+    # print
     progress_en.insert(tk.END, "Input File:  " + plaintext + "\n")
-    progress_en.insert(tk.END, "MD5 Checksum:  " + md5_hash.hexdigest() + "\n")
+    # progress_en.insert(tk.END, "MD5 Checksum:  " + md5_hash.hexdigest() + "\n")
     dir_path = os.path.dirname(os.path.realpath(encrypted_file))
     progress_en.insert(
         tk.END, "File encrypted as:  " + dir_path + "\\" + encrypted_file + "\n"
@@ -151,17 +199,55 @@ def decrypt_button_clicked():
     filetype_de = filetype(ciphertext)
     decrypted_file = "decrypted_file" + filetype_de
 
-    decrypt_file(ciphertext, decrypted_file, key_de)
+    if (
+        filetype_de == ".png"
+        or filetype_de == ".jpg"
+        or filetype_de == ".jpeg"
+        or filetype_de == ".ppm"
+        or filetype_de == ".gif"
+        or filetype_de == ".tiff"
+        or filetype_de == ".bmp"
+        or filetype_de == ".pdf"
+    ):
+        # image encrypt
+        if filetype_de == ".png":
+            format = "png"
+        elif filetype_de == ".jpg":
+            format = "jpeg"
+        elif filetype_de == ".jpeg":
+            format = "jpeg"
+        elif filetype_de == ".ppm":
+            format = "ppm"
+        elif filetype_de == ".gif":
+            format = "gif"
+        elif filetype_de == ".tiff":
+            format = "tiff"
+        elif filetype_de == ".bmp":
+            format = "bmp"
+        elif filetype_de == ".pdf":
+            format = "pdf"
 
-    md5check = decrypted_file
-    md5_hash = hashlib.md5()
-    with open(md5check, "rb") as f:
-        # Read and update hash in chunks of 4K
-        for byte_block in iter(lambda: f.read(4096), b""):
-            md5_hash.update(byte_block)
+        print("image file detected")
+        filename_out = "encrypted_img"
+        filename = ciphertext
+        key = key_de
+        ##process_image(filename, key, format, filename_out)
+        decrypt_image(filename_out, filename, format, key)
+        md5check = filename_out
+    else:
+        # all file encrypt
+        print("non-image file detected")
+        decrypt_file(ciphertext, decrypted_file, key_de)
+        md5check = decrypted_file
+
+    # md5_hash = hashlib.md5()
+    # with open(md5check, "rb") as f:
+    # Read and update hash in chunks of 4K
+    # for byte_block in iter(lambda: f.read(4096), b""):
+    # md5_hash.update(byte_block)
 
     progress_de.insert(tk.END, "Input File:  " + ciphertext + "\n")
-    progress_de.insert(tk.END, "MD5 Checksum:  " + md5_hash.hexdigest() + "\n")
+    # progress_de.insert(tk.END, "MD5 Checksum:  " + md5_hash.hexdigest() + "\n")
     dir_path = os.path.dirname(os.path.realpath(decrypted_file))
     progress_de.insert(
         tk.END, "File decrypted as:  " + dir_path + "\\" + decrypted_file + "\n"
@@ -175,6 +261,80 @@ def make_16_bytes(text):
     padding = b"\x01" * padding_length
     padded_byte_object = padding + byte_object
     return padded_byte_object
+
+
+# ---------------------Image-----------------------
+
+
+def convert_to_RGB(data):
+    r, g, b = tuple(
+        map(lambda d: [data[i] for i in range(0, len(data)) if i % 3 == d], [0, 1, 2])
+    )
+    pixels = tuple(zip(r, g, b))
+    return pixels
+
+
+def process_image(filename, key, format, filename_out):
+    # Opens image and converts it to RGB format for PIL
+    im = Image.open(filename)
+    data = im.convert("RGB").tobytes()
+
+    # Since we will pad the data to satisfy AES's multiple-of-16 requirement, we will store the original data length and "unpad" it later.
+    original = len(data)
+
+    # Encrypts using desired AES mode (we'll set it to CBC by default)
+    encrypted_data = aes_cbc_encrypt(key, pad(data))[:original]
+
+    # Create a new PIL Image object and save the old image data into the new image.
+    im2 = Image.new(im.mode, im.size)
+    im2.putdata(convert_to_RGB(encrypted_data))
+
+    # Save image
+    if format == "jpeg":
+        format2 = "png"
+        im2.save(filename_out + "." + format, format2)
+    else:
+        im2.save(filename_out + "." + format, format)
+
+
+# CBC Encryption
+def aes_cbc_encrypt(key, data, mode=AES.MODE_CBC):
+    IV = "A" * 16  # We'll manually set the initialization vector to simplify things
+    aes = AES.new(key, mode, IV.encode("utf8"))
+    new_data = aes.encrypt(data)
+    print("Encrypting")
+    return new_data
+
+
+# CBC Decryption
+def aes_cbc_decrypt(key, data, mode=AES.MODE_CBC):
+    IV = "A" * 16  # Same initialization vector as used for encryption
+    aes = AES.new(key, mode, IV.encode("utf8"))
+    decrypted_data = aes.decrypt(data)
+    return decrypted_data.rstrip(b"\x00")  # Remove padding
+
+
+# Decrypt the previously encrypted image
+def decrypt_image(filename_out, filename, format, key):
+    im = Image.open(filename)
+    data = im.convert("RGB").tobytes()
+
+    decrypted_data = aes_cbc_decrypt(key, data)
+
+    # Create a new PIL Image object and save the decrypted data into the new image.
+    im2 = Image.new(im.mode, im.size)
+    im2.putdata(convert_to_RGB(decrypted_data))
+
+    # Save the decrypted image
+    if format == "jpeg":
+        format2 = "png"
+        im2.save("decrypted" + "." + format, format2)
+    else:
+        im2.save("decrypted" + "." + format, format)
+
+
+def pad(data):
+    return data + b"\x00" * (16 - len(data) % 16)
 
 
 # screen tab
