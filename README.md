@@ -1,15 +1,20 @@
 # EDCryption
 
-This miniproject about encryption/decryption the text.
+This miniproject about file encryption/decryption.
+- Support all file type with file binary encrypt
+- Support preview encryption image file
+- Support on both Windows and macOS
 
-GUI using Python Tkinter.
+### Requirement
 
-and I will update to support encryption/decryption picture, audio and video soon.
+- Python 3.10 or newer (3.9 will get black screen problem with Tkinter)
+- Tkinter 'pip3 install tkinter'
+- Pycrytodome 'pip3 install pycryptodome'
+- Pillow 'pip3 install pillow'
 
-### EDCryption v1.4.0-beta
+### EDCryption v1.5.1-beta
 
-- Add to support all file extension
-
-### Found Bug
-
-- Can't preview encrypted file except .txt file
+- Support all file type encryption/decryption
+- Support image file encryption preview (.png, .jpg, .jpeg, .bmp, etc.)
+- Support both Windows and macOS
+- Remove MD5 Checksum for input/output file
