@@ -12,7 +12,7 @@ This miniproject about file encryption/decryption.
 - Pycrytodome `pip3 install pycryptodome`
 - Pillow `pip3 install pillow`
 
-### EDCryption v1.5.1-beta
+### EDCryption v1.5.2
 
 - Support all file type encryption/decryption
 - Support image file encryption preview (.png, .jpg, .jpeg, .bmp, etc.)
