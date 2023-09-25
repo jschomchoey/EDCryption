@@ -1,4 +1,4 @@
-# Update v1.5.2
+# Update v1.5.3
 import tkinter as tk
 import os
 from tkinter import *
@@ -8,7 +8,7 @@ from PIL import Image
 
 # screen setup
 app = tk.Tk()
-app.title("EDCryption 1.5.2")
+app.title("EDCryption 1.5.3")
 app.minsize(800, 400)
 app.maxsize(800, 400)
 app.resizable(False, False)
@@ -104,7 +104,7 @@ def convert_to_RGB(data):
     return pixels
 
 
-def process_image(filename, key, format, filename_out):
+def encrypt_image(filename, key, format, filename_out):
     # Opens image and converts it to RGB format for PIL
     im = Image.open(filename)
     data = im.convert("RGB").tobytes()
@@ -113,41 +113,18 @@ def process_image(filename, key, format, filename_out):
     original = len(data)
 
     # Encrypts using desired AES mode (we'll set it to CBC by default)
-    encrypted_data = aes_cbc_encrypt(key, pad(data))[:original]
+    encrypted_data = aes_eax_encrypt(key, pad(data))[:original]
 
     # Create a new PIL Image object and save the old image data into the new image.
     im2 = Image.new(im.mode, im.size)
     im2.putdata(convert_to_RGB(encrypted_data))
 
     # Save image
-    if format == "jpeg":
+    if format == "jpeg" or format == "jpg" or format == "jp2":
         format2 = "png"
-        im2.save(filename_out + "." + format, format2)
-    elif format == "jpg":
-        format2 = "png"
-        im2.save(filename_out + "." + format, format2)
-    elif format == "jp2":
-        format2 = "png"
-        im2.save(filename_out + "." + format, format2)
+        im2.save("encrypted" + "." + format, format2)
     else:
-        im2.save(filename_out + "." + format, format)
-
-
-# CBC Encryption
-def aes_cbc_encrypt(key, data, mode=AES.MODE_CBC):
-    IV = "A" * 16  # We'll manually set the initialization vector to simplify things
-    aes = AES.new(key, mode, IV.encode("utf8"))
-    new_data = aes.encrypt(data)
-    print("Encrypted")
-    return new_data
-
-
-# CBC Decryption
-def aes_cbc_decrypt(key, data, mode=AES.MODE_CBC):
-    IV = "A" * 16  # Same initialization vector as used for encryption
-    aes = AES.new(key, mode, IV.encode("utf8"))
-    decrypted_data = aes.decrypt(data)
-    return decrypted_data.rstrip(b"\x00")  # Remove padding
+        im2.save("encrypted" + "." + format, format)
 
 
 # Decrypt the previously encrypted image
@@ -155,24 +132,35 @@ def decrypt_image(filename_out, filename, format, key):
     im = Image.open(filename)
     data = im.convert("RGB").tobytes()
 
-    decrypted_data = aes_cbc_decrypt(key, data)
+    decrypted_data = aes_eax_decrypt(key, data)
 
     # Create a new PIL Image object and save the decrypted data into the new image.
     im2 = Image.new(im.mode, im.size)
     im2.putdata(convert_to_RGB(decrypted_data))
 
     # Save the decrypted image
-    if format == "jpeg":
-        format2 = "png"
-        im2.save("decrypted" + "." + format, format2)
-    elif format == "jpg":
-        format2 = "png"
-        im2.save("decrypted" + "." + format, format2)
-    elif format == "jp2":
+    if format == "jpeg" or format == "jpg" or format == "jp2":
         format2 = "png"
         im2.save("decrypted" + "." + format, format2)
     else:
         im2.save("decrypted" + "." + format, format)
+
+
+# EAX Encryption
+def aes_eax_encrypt(key, data, mode=AES.MODE_EAX):
+    IV = "A" * 16  # We'll manually set the initialization vector to simplify things
+    aes = AES.new(key, mode, IV.encode("utf8"))
+    new_data = aes.encrypt(data)
+    print("Encrypted")
+    return new_data
+
+
+# EAX Decryption
+def aes_eax_decrypt(key, data, mode=AES.MODE_EAX):
+    IV = "A" * 16  # Same initialization vector as used for encryption
+    aes = AES.new(key, mode, IV.encode("utf8"))
+    decrypted_data = aes.decrypt(data)
+    return decrypted_data.rstrip(b"\x00")  # Remove padding
 
 
 def pad(data):
@@ -233,7 +221,7 @@ def encrypt_button_clicked():
         filename = inputfile
 
         # process encrypt image
-        process_image(filename, key_en, format, filename_out)
+        encrypt_image(filename, key_en, format, filename_out)
     else:
         # all file encrypt
         print("non-image file detected")
